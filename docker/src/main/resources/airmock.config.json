@@ -1,0 +1,24 @@
+{
+  "mappings": [
+    {
+      "name": "waf",
+      "contextRoot": "/waf",
+      "restrictedToRoles": [],
+      "authenticationFlow": "REDIRECT",
+      "headers": []
+    },
+    {
+      "name": "public",
+      "contextRoot": "/",
+      "passThroughCookies": [],
+      "restrictedToRoles": [],
+      "deniedAccessUrl": "NOT_USED",
+      "authenticationFlow": "REDIRECT",
+      "headers": [],
+      "backend": {
+        "host": "localhost",
+        "port": "9999"
+      }
+    }
+  ]
+}
