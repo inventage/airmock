@@ -309,7 +309,7 @@
                         <contextDirectory>${project.build.directory}/classes</contextDirectory>
                         <repository>${image.name}</repository>
                         <pullNewerImage>false</pullNewerImage>
-                        <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
+                        <useMavenSettingsForAuth>false</useMavenSettingsForAuth>
                         <skipDockerInfo>true</skipDockerInfo>
                     </configuration>
                     <executions>
