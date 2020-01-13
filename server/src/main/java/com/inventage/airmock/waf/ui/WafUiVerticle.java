@@ -144,7 +144,9 @@ public class WafUiVerticle extends AbstractVerticle implements RouteProvider {
                                 buffer.append(pre(cookie.getString("name") + "=" + cookie.getString("value")));
                                 if (showJWTDecodingLink(cookie)) {
                                     buffer.append(" [");
-                                    buffer.append("<a target=_blank href=\"https://jwt.io?token=").append(cookie.getString(CookieBag.VALUE_FIELD)).append("\">show</a>");
+                                    buffer.append("<a target=_blank href=\"https://jwt.io?token=")
+                                            .append(cookie.getString(CookieBag.VALUE_FIELD))
+                                            .append("\">show</a>");
                                     buffer.append("]");
                                 }
                                 buffer.append("</li>");
@@ -196,7 +198,11 @@ public class WafUiVerticle extends AbstractVerticle implements RouteProvider {
                 .map(mapping -> (JsonObject) mapping)
                 .forEach(mapping -> {
                     buffer.append("<li>");
-                    buffer.append("<a target=\"_blank\" href=\"").append(mapping.getString("contextRoot")).append("\"> [").append(mapping.getString("contextRoot")).append("]</a> ");
+                    buffer.append("<a target=\"_blank\" href=\"")
+                            .append(mapping.getString("contextRoot"))
+                            .append("\"> [")
+                            .append(mapping.getString("contextRoot"))
+                            .append("]</a> ");
                     buffer.append(session.get(mapping.getString("contextRoot")) != null ? " @ "
                         + DATE_TIME_FORMATTER.format(session.get(mapping.getString("contextRoot"))) : "");
                     buffer.append("</li>");
