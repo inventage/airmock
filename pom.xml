@@ -54,7 +54,7 @@
         <junit5.version>5.4.2</junit5.version>
 
         <docker.pull.registry></docker.pull.registry>
-        <docker.push.registry>docker-registry.inventage.com:10022/</docker.push.registry>
+        <docker.push.registry>docker.pkg.github.com/inventage/airmock/</docker.push.registry>
 
         <image.name>${project.groupId}.${project.artifactId}</image.name>
         <image.global.name>${docker.push.registry}${image.name}</image.global.name>
@@ -110,6 +110,7 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
@@ -142,6 +143,7 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- Skip artifact upload during deploy phase by Maven -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
