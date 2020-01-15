@@ -13,5 +13,6 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
+        settings-path: ${{ github.workspace }}/.github/ # location for the settings.xml file
     - name: Build with Maven
       run: mvn -B deploy --file pom.xml
