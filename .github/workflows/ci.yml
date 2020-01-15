@@ -13,6 +13,5 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
-        server-id: docker.pkg.github.com
     - name: Build with Maven
       run: mvn -B deploy --file pom.xml
