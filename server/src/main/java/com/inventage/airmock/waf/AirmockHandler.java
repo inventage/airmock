@@ -122,20 +122,35 @@ public class AirmockHandler implements Handler<RoutingContext> {
         final String name = mapping.getString("name");
         final String contextRoot = mapping.getString("contextRoot");
         final String deniedAccessUrl = configUtils.replaceEnvVariables(mapping.getString("deniedAccessUrl"));
-        final MappingFlowType authenticationFlow = MappingFlowType.valueOf(mapping.getString("authenticationFlow"));
-        final JsonArray restrictedToRoles = mapping.getJsonArray("restrictedToRoles");
-        final Object[] objects = restrictedToRoles.getList().toArray(new String[0]);
-        final JsonArray headersArray = mapping.getJsonArray("headers");
+        final MappingFlowType authenticationFlow = authenticationFlow(mapping,"authenticationFlow");
+        final JsonArray restrictedToRoles = jsonArray(mapping,"restrictedToRoles");
+        final String[] objects = restrictedToRoles.stream().map(Object::toString).collect(Collectors.toList()).toArray(new String[0]);
+        final JsonArray headersArray = jsonArray(mapping,"headers");
         final List<String> headers = headersArray.stream().map(Object::toString).collect(Collectors.toList());
         final JsonObject backend = mapping.getJsonObject("backend");
         final Map<String, String> mappingConfig = getMappingConfig(mapping);
 
         final DefaultMapping newMapping = createConcreteMapping(authenticationFlow);
 
-        newMapping.init(configUtils, name, contextRoot, (String[]) objects, deniedAccessUrl,
+        newMapping.init(configUtils, name, contextRoot, objects, deniedAccessUrl,
             headers, backendHost(backend, config), backendPort(backend, config), mappingConfig);
 
         return newMapping;
+    }
+
+    private JsonArray jsonArray(JsonObject mapping, String property) {
+        final JsonArray jsonArray = mapping.getJsonArray(property);
+        return jsonArray == null ? new JsonArray() : jsonArray;
+    }
+
+    private MappingFlowType authenticationFlow(JsonObject mapping, String property) {
+        final String mappingString = mapping.getString("authenticationFlow");
+        if (mappingString == null) {
+            return MappingFlowType.CODE_401;
+        }
+        else {
+            return MappingFlowType.valueOf(mappingString);
+        }
     }
 
     DefaultMapping createConcreteMapping(MappingFlowType mappingFlowType) {

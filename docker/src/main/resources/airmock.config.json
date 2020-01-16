@@ -1,23 +1,26 @@
 {
   "mappings": [
     {
-      "name": "waf",
-      "contextRoot": "/waf",
-      "restrictedToRoles": [],
-      "authenticationFlow": "REDIRECT",
-      "headers": []
+      "name": "waf ui",
+      "contextRoot": "/waf"
     },
     {
-      "name": "public",
-      "contextRoot": "/",
-      "passThroughCookies": [],
-      "restrictedToRoles": [],
-      "deniedAccessUrl": "NOT_USED",
+      "name": "backend one",
+      "contextRoot": "/backend1",
+      "restrictedToRoles": ["aRole"],
       "authenticationFlow": "REDIRECT",
-      "headers": [],
+      "deniedAccessUrl": "https:/www.inventage.com",
       "backend": {
         "host": "localhost",
-        "port": "9999"
+        "port": "10001"
+      }
+    },
+    {
+      "name": "proxy",
+      "contextRoot": "/",
+      "backend": {
+        "host": "localhost",
+        "port": "10001"
       }
     }
   ]
