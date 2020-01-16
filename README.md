@@ -1,2 +1,76 @@
-# airmock
-A mock implementation for web application firewalls
+# Airmock
+A mock implementation for web application firewalls.
+
+The primary use case for airmock is during application development. 
+
+Incoming requests are dispatched according to their request prefix matching the context root of a mapping. The matching is done in the definition order.
+![Airmock-Overview](./docs/Airmock-Overview.png)
+
+The easiest way to use airmock is by starting it from the docker image.
+
+A not yet released version (e.g. the latest build) can be taken from the [packages of the airmock](https://github.com/inventage/airmock/packages) repo.
+```
+docker run --rm -p10000:10000 docker.pkg.github.com/inventage/airmock/airmock:latest
+```
+
+The released versions can be taken from the [packages of the inventage/docker]() repo.
+```
+docker run --rm -p10000:10000 docker.pkg.github.com/inventage/docker/airmock:1.0.0
+```
+
+## Configuration
+
+The configuration is done by environment variables and a JSON file for defining the mappings.
+
+![Airmock-Overview-Config](./docs/Airmock-Overview-Config.png)
+
+### Environment Variables
+
+### Mappings
+
+The mappings are defined by a mapping file in JSON syntax. It contains all mappings to be used.
+
+The docker images comes with a default mapping file. It is located at `/opt/airmock/mapping/airmock.mappings.json` and the environment variable `com.inventage.airmock.waf.AirmockHandler.config-path` is set to this path. It contains the following entries:
+```
+{
+  "mappings": [
+    {
+      "name": "waf ui",
+      "contextRoot": "/waf"
+    },
+    {
+      "name": "backend one",
+      "contextRoot": "/backend1",
+      "restrictedToRoles": ["aRole"],
+      "authenticationFlow": "REDIRECT",
+      "deniedAccessUrl": "https:/www.inventage.com",
+      "backend": {
+        "host": "localhost",
+        "port": "10001"
+      }
+    },
+    {
+      "name": "proxy",
+      "contextRoot": "/",
+      "backend": {
+        "host": "localhost",
+        "port": "10001"
+      }
+    }
+  ]
+}
+```
+
+A mapping contains the following properties:
+- **name**: A unique name for this mapping.
+- **contextRoot**: The path this mapping is used for. A request matches a contextRoot if it starts with the contextRoot. The first matching mapping (in order of their appearance in the config file) wins.
+- **restrictedToRoles**: The user must have on of these roles (comma separate them inside the square brackets if it's more than one) to be able to just pass through. The different authentication flow types handle it differently when the user does not have any. If this is empty, the request can always pass. This is ignored for TOKENEXCHANGE.
+- **authenticationFlow**: The Type of authentication flow. Can be REDIRECT, ONESHOT, CODE_401, CODE_403 or TOKENEXCHANGE. These are explained in the next Chapter
+- **deniedAccessUrl**: The url to redirect to if the user does not have any of the required roles. For TOKENEXCHANGE this is the URL to send the token exchange request to. You can use environment variables here as ${exampleEnvVar}
+- **headers**: The headers to pass to the deniedAccessUrl. Used for ONESHOT.
+- **backend**: The host and port of the backend to redirect to. You can use environment variables here as ${exampleEnvVar}
+- **config**: This is a container for additional configurations. So far this is used only for flow type TOKENEXCHANGE.
+  - **certificateUrl**: The URL to get the certificate to check an incoming JWT token against. Maybe check the well-known url of your server, if you don't know it. You can use environment variables here as ${exampleEnvVar} 
+  - **subjectIssuer**: //TODO
+  - **clientId**: The clientId to use in the token exchange call.
+  - **clientSecret**: The clientSecret to use in the token exchange request.

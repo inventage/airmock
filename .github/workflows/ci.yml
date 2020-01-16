@@ -16,5 +16,5 @@ jobs:
     - name: Build with Maven
       run: mvn -B deploy --file pom.xml
       env:
-        GITHUB_ACTOR: ${{ github.actor }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_ACTOR: ${{ github.actor }} # used by com.spotify:dockerfile-maven-plugin
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # used by com.spotify:dockerfile-maven-plugin
