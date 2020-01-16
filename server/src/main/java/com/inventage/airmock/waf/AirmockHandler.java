@@ -122,10 +122,10 @@ public class AirmockHandler implements Handler<RoutingContext> {
         final String name = mapping.getString("name");
         final String contextRoot = mapping.getString("contextRoot");
         final String deniedAccessUrl = configUtils.replaceEnvVariables(mapping.getString("deniedAccessUrl"));
-        final MappingFlowType authenticationFlow = authenticationFlow(mapping,"authenticationFlow");
-        final JsonArray restrictedToRoles = jsonArray(mapping,"restrictedToRoles");
-        final String[] objects = restrictedToRoles.stream().map(Object::toString).collect(Collectors.toList()).toArray(new String[0]);
-        final JsonArray headersArray = jsonArray(mapping,"headers");
+        final MappingFlowType authenticationFlow = authenticationFlow(mapping, "authenticationFlow");
+        final JsonArray restrictedToRoles = jsonArray(mapping, "restrictedToRoles");
+        final String[] objects = restrictedToRoles.stream().map(o -> o.toString()).collect(Collectors.toList()).toArray(new String[0]);
+        final JsonArray headersArray = jsonArray(mapping, "headers");
         final List<String> headers = headersArray.stream().map(Object::toString).collect(Collectors.toList());
         final JsonObject backend = mapping.getJsonObject("backend");
         final Map<String, String> mappingConfig = getMappingConfig(mapping);
