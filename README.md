@@ -10,12 +10,12 @@ The easiest way to use airmock is by starting it from the docker image.
 
 A not yet released version (e.g. the latest build) can be taken from the [packages of the airmock](https://github.com/inventage/airmock/packages) repo.
 ```
-docker run --rm -p10000:10000 docker.pkg.github.com/inventage/airmock/airmock:latest
+docker run --rm -p10000:10000 -e com.inventage.airmock.waf.ui.WafUiVerticle.path-prefix=/waf docker.pkg.github.com/inventage/airmock/airmock:latest
 ```
 
 The released versions can be taken from the [packages of the inventage/docker]() repo.
 ```
-docker run --rm -p10000:10000 docker.pkg.github.com/inventage/docker/airmock:1.0.0
+nyi
 ```
 
 ## Configuration
@@ -74,3 +74,15 @@ A mapping contains the following properties:
   - **subjectIssuer**: //TODO
   - **clientId**: The clientId to use in the token exchange call.
   - **clientSecret**: The clientSecret to use in the token exchange request.
+
+## Docker login for GitHub Packages
+
+For pulling docker images from any GitHub Packages Repository an authentication with a GithHub personal access token is mandatory. This can be created in the [settings of your GitHub account](https://github.com/settings/profile) (see [Creating a personal access token for the command line](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line)). Please note that the following scopes must be selected for such a token:
+- repo
+- read:packages
+
+The authentication is done by:
+
+```
+docker login -u <GITHUB-USERNAME> -p <PERSONAL-ACCESS-TOKEN> docker.pkg.github.com
+```
