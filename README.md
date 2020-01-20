@@ -4,16 +4,19 @@ A mock implementation for web application firewalls.
 The primary use case for airmock is during application development. 
 
 Incoming requests are dispatched according to their request prefix matching the context root of a mapping. The matching is done in the definition order.
+
 ![Airmock-Overview](./docs/Airmock-Overview.png)
 
 The easiest way to use airmock is by starting it from the docker image.
 
 A not yet released version (e.g. the latest build) can be taken from the [packages of the airmock](https://github.com/inventage/airmock/packages) repo.
+
 ```
 docker run --rm -p10000:10000 -e com.inventage.airmock.waf.ui.WafUiVerticle.path-prefix=/waf docker.pkg.github.com/inventage/airmock/airmock:latest
 ```
 
 The released versions can be taken from the [packages of the inventage/docker]() repo.
+
 ```
 nyi
 ```
