@@ -1,4 +1,7 @@
 # Airmock
+
+![](https://github.com/inventage/airmock/workflows/Build%20Pipeline/badge.svg)
+
 A mock implementation for web application firewalls.
 
 The primary use case for airmock is during application development. 
