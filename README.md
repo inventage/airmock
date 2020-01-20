@@ -1,6 +1,6 @@
 # Airmock
 
-![](https://github.com/inventage/airmock/workflows/Build%20Pipeline/badge.svg)
+[![Build Pipeline Status](https://github.com/inventage/airmock/workflows/Build%20Pipeline/badge.svg)](https://github.com/inventage/airmock/actions?query=workflow%3A%22Build+Pipeline%22)
 
 A mock implementation for web application firewalls.
 
