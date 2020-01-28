@@ -1,0 +1,28 @@
+{
+  "mappings": [
+    {
+      "name": "waf ui",
+      "contextRoot": "/waf"
+    },
+    {
+      "name": "backend one",
+      "contextRoot": "/backend1",
+      "restrictedToRoles": ["aRole"],
+      "authenticationFlow": "REDIRECT",
+      "deniedAccessUrl": "https://www.inventage.com",
+      "backend": {
+        "protocol": "http",
+        "host": "localhost",
+        "port": "10001"
+      }
+    },
+    {
+      "name": "proxy",
+      "contextRoot": "/",
+      "backend": {
+        "host": "localhost",
+        "port": "10001"
+      }
+    }
+  ]
+}

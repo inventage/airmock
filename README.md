@@ -71,15 +71,22 @@ A mapping contains the following properties:
 - **name**: A unique name for this mapping.
 - **contextRoot**: The path this mapping is used for. A request matches a contextRoot if it starts with the contextRoot. The first matching mapping (in order of their appearance in the config file) wins.
 - **restrictedToRoles**: The user must have on of these roles (comma separate them inside the square brackets if it's more than one) to be able to just pass through. The different authentication flow types handle it differently when the user does not have any. If this is empty, the request can always pass. This is ignored for TOKENEXCHANGE.
-- **authenticationFlow**: The Type of authentication flow. Can be REDIRECT, ONESHOT, CODE_401, CODE_403 or TOKENEXCHANGE. These are explained in the next Chapter
-- **deniedAccessUrl**: The url to redirect to if the user does not have any of the required roles. For TOKENEXCHANGE this is the URL to send the token exchange request to. You can use environment variables here as ${exampleEnvVar}
+- **authenticationFlow**: The Type of authentication flow. Can be REDIRECT, ONESHOT, CODE_401, CODE_403 or `TOKENEXCHANGE`. These are explained below.
+- **deniedAccessUrl**: The url to redirect to if the user does not have any of the required roles. For `TOKENEXCHANGE` this is the URL to send the token exchange request to. You can use environment variables here as ${exampleEnvVar}.
 - **headers**: The headers to pass to the deniedAccessUrl. Used for ONESHOT.
 - **backend**: The host and port of the backend to redirect to. You can use environment variables here as ${exampleEnvVar}
-- **config**: This is a container for additional configurations. So far this is used only for flow type TOKENEXCHANGE.
-  - **certificateUrl**: The URL to get the certificate to check an incoming JWT token against. Maybe check the well-known url of your server, if you don't know it. You can use environment variables here as ${exampleEnvVar} 
-  - **subjectIssuer**: //TODO
-  - **clientId**: The clientId to use in the token exchange call.
-  - **clientSecret**: The clientSecret to use in the token exchange request.
+- **config**: This is a container for additional configurations. So far this is used only for flow type `TOKENEXCHANGE`.
+- **certificateUrl**: The URL to get the certificate to check an incoming JWT token against. Maybe check the well-known url of your server, if you don't know it. You can use environment variables here as ${exampleEnvVar}.
+- **subjectIssuer**: //TODO
+- **clientId**: The clientId to use in the token exchange call.
+- **clientSecret**: The clientSecret to use in the token exchange request.
+
+#### The different Authenticaton Flow Types
+- **REDIRECT**: If the user does not have any of the roles configured in restrictedToRoles, airmock redirects to the deniedAccessUrl.
+- **ONESHOT,**: If the user does not have any of the roles configured in restrictedToRoles, this makes a one shot request to the deniedAccessUrl. 
+- **CODE_401**: Sends a 401 back if the user does not have one of the roles configured in restrictedToRoles. This is useful for mappings for backends that are not called from a browser that can display a login screen (for example the server of a SPA). 
+- **CODE_403**: Sends a 403 back if the user does not have one of the roles configured in restrictedToRoles. This is useful for mappings for backends that are not called from a browser that can display a login screen (for example the server of a SPA).
+- **TOKENEXCHANGE**: This expects a either a JWT in the Cookie "jwt" or a SAML Assertion in the Authorization header. If The JWT is not there or not valid, Airmock makes a token exchange reequest to the accessDeniedUrl and uses the resulting JWT. It also sets that JWT as a cookie so that it is available on subsequent calls.
 
 ## Docker login for GitHub Packages
 

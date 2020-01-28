@@ -2,12 +2,14 @@ version: '3'
 
 services:
   airmock:
-    image: airmock
+    image: docker.pkg.github.com/inventage/airmock/airmock:latest
     container_name: airmock
     ports:
     - "10000:10000"
     env_file:
     - airmock.common.env
     - airmock.specific.env
+    volumes:
+    - ./mapping:/opt/airmock/mapping
     labels:
       org.labels-schema.group: "airmock"
