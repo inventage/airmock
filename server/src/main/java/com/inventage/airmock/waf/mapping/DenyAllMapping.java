@@ -39,6 +39,9 @@ public class DenyAllMapping implements Mapping {
     }
 
     @Override
+    public String backendProtocol() { return null; }
+
+    @Override
     public String backendHost() {
         return null;
     }

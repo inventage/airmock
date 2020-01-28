@@ -38,7 +38,7 @@ public class ProxyVerticle extends AbstractVerticle implements RouteProvider {
     private Map<Mapping, HttpProxy> proxies = new HashMap<>();
 
     @Override
-    public void start(Future<Void> startFuture) throws Exception {
+    public void start(Future<Void> startFuture) {
         LOGGER.info("start: ...");
 
         final ConfigRetriever retriever = AirmockConfigRetriever.create(vertx);
@@ -106,8 +106,8 @@ public class ProxyVerticle extends AbstractVerticle implements RouteProvider {
      */
     protected HttpProxy createHttpProxy(Mapping mapping) {
         final HttpProxy httpProxy = new AirmockHttpProxy(xForwardedHost, xForwardedPort == null ? null : xForwardedPort.toString());
-        httpProxy.backend(mapping.backendHost(), mapping.backendPort());
-        httpProxy.setClient(vertx.createHttpClient(withOptions()).getDelegate());
+        httpProxy.backend(mapping.backendProtocol(), mapping.backendHost(), mapping.backendPort());
+        httpProxy.setClient(vertx.createHttpClient(withOptions(mapping)).getDelegate());
         httpProxy.circuitBreaker(CircuitBreaker.create("backend", vertx, getHttpProxyCircuitBreakerOptions()));
         httpProxy.backendUrlMapper(Function.identity());
         return httpProxy;
@@ -117,9 +117,11 @@ public class ProxyVerticle extends AbstractVerticle implements RouteProvider {
      *
      * @return HttpClientOptions to be used
      */
-    protected HttpClientOptions withOptions() {
+    protected HttpClientOptions withOptions(Mapping mapping) {
         return new HttpClientOptions().setMaxInitialLineLength(10000)
-                .setMaxPoolSize(10 /* = HttpClientOptions.DEFAULT_MAX_POOL_SIZE*/);
+                .setMaxPoolSize(10 /* = HttpClientOptions.DEFAULT_MAX_POOL_SIZE*/)
+                .setSsl(mapping.backendProtocol() != null && "https".equalsIgnoreCase(mapping.backendProtocol()))
+                .setTrustAll(true);
     }
 
     /**

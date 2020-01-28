@@ -20,6 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpCookie;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -57,7 +58,7 @@ public class AirmockHandler implements Handler<RoutingContext> {
         try {
             logConfig(config);
             pathToMappingsConfig = config.getString(PREFIX + PATH_TO_CONFIG);
-            final String wafConfig = readFile(pathToMappingsConfig, Charset.forName("UTF-8"));
+            final String wafConfig = readFile(pathToMappingsConfig, StandardCharsets.UTF_8);
             LOGGER.info("--config:-----------------------------------------------------------");
             LOGGER.info("using mappings from '{}': \n{}", pathToMappingsConfig, wafConfig);
             LOGGER.info("--------------------------------------------------------------------");
@@ -133,7 +134,7 @@ public class AirmockHandler implements Handler<RoutingContext> {
         final DefaultMapping newMapping = createConcreteMapping(authenticationFlow);
 
         newMapping.init(configUtils, name, contextRoot, objects, deniedAccessUrl,
-            headers, backendHost(backend, config), backendPort(backend, config), mappingConfig);
+            headers, backendProtocol(backend, config), backendHost(backend, config), backendPort(backend, config), mappingConfig);
 
         return newMapping;
     }
@@ -192,6 +193,9 @@ public class AirmockHandler implements Handler<RoutingContext> {
         return mappings.stream().filter(mapping -> mapping.isMatching(path)).findFirst().orElse(new DenyAllMapping());
     }
 
+    private String backendProtocol(JsonObject backend, JsonObject config) {
+        return backend == null ? "" : substituteStringVariable(backend.getString("protocol") == null ? "http" : backend.getString("protocol"), config);
+    }
     private String backendHost(JsonObject backend, JsonObject config) {
         return backend == null ? "" : substituteStringVariable(backend.getString("host"), config);
     }

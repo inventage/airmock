@@ -55,6 +55,13 @@ public interface Mapping {
     void logout(RoutingContext routingContext);
 
     /**
+     * Protocol to redirect requests to.
+     *
+     * @return protocol
+     */
+    String backendProtocol();
+
+    /**
      * Host to redirect requests to.
      *
      * @return host name

@@ -1,12 +1,14 @@
 package com.inventage.airmock.kernel.proxy.internal;
 
 import com.inventage.airmock.kernel.proxy.HttpProxy;
+import io.netty.handler.codec.http.HttpUtil;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientResponse;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.http.impl.HttpUtils;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.core.net.SocketAddress;
@@ -27,6 +29,7 @@ public class HttpProxyImpl implements HttpProxy {
     protected String applicationJwtCookieName;
     protected CircuitBreaker circuitBreaker;
     protected Function<HttpServerRequest, Future<SocketAddress>> backendSelector = req -> Future.failedFuture("No backend configured");
+    protected String backendProtocol;
     protected Function<String, String> backendUrlMapper = Function.identity();
 
     public HttpProxyImpl() {
@@ -39,14 +42,11 @@ public class HttpProxyImpl implements HttpProxy {
     }
 
     @Override
-    public HttpProxy backend(SocketAddress address) {
+    public HttpProxy backend(String protocol, String host, int port) {
+        backendProtocol = protocol;
+        final SocketAddressImpl address = new SocketAddressImpl(port, host);
         backendSelector = req -> Future.succeededFuture(address);
         return this;
-    }
-
-    @Override
-    public HttpProxy backend(String host, int port) {
-        return backend(new SocketAddressImpl(port, host));
     }
 
     @Override
@@ -90,7 +90,7 @@ public class HttpProxyImpl implements HttpProxy {
         fut.setHandler(ar -> {
             if (ar.succeeded()) {
                 final SocketAddress backend = ar.result();
-                LOGGER.debug("delegateToBackend: forwarding to backend '{}'", backend, routingContext);
+                LOGGER.debug("delegateToBackend: forwarding to backend '{}://{}'", backendProtocol, backend, routingContext);
                 final BackendRequestImpl backendRequest = getBackendRequestImpl(proxyHostName,
                     proxyHostPort,
                     applicationJwtCookieName,

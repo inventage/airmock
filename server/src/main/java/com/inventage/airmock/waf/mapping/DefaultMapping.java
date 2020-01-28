@@ -29,6 +29,7 @@ public class DefaultMapping implements Mapping {
     private ConfigUtils configUtils;
     private String name;
     private String contextRoot;
+    private String backendProtocol;
     private String backendHost;
     private int backendPort;
     private List<String> restrictedToRoles = new ArrayList<>();
@@ -54,12 +55,14 @@ public class DefaultMapping implements Mapping {
                      String[] restrictedToRoles,
                      String accessDeniedUrl,
                      List<String> headers,
+                     String backendProtocol,
                      String backendHost,
                      int backendPort,
                      Map<String, String> config) {
         this.configUtils = configUtils;
         this.name = name;
         this.contextRoot = contextRoot;
+        this.backendProtocol = backendProtocol;
         this.backendHost = backendHost;
         this.backendPort = backendPort;
         this.restrictedToRoles.addAll(Arrays.asList(restrictedToRoles));
@@ -105,6 +108,11 @@ public class DefaultMapping implements Mapping {
     @Override
     public void logout(RoutingContext routingContext) {
 
+    }
+
+    @Override
+    public String backendProtocol() {
+        return backendProtocol;
     }
 
     @Override

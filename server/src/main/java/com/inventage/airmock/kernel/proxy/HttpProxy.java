@@ -21,22 +21,16 @@ import java.util.function.Function;
  * Initial code is taken from https://github.com/vietj/vertx-http-proxy.
  */
 public interface HttpProxy {
-    /**
-     * Set the address of the backend system.
-     *
-     * @param address the address
-     * @return HttpProxy
-     */
-    HttpProxy backend(SocketAddress address);
 
     /**
      * Set the address of the backend system.
      *
+     * @param protocol the protocol to the backend system (http, https)
      * @param host the host name of the backend system
      * @param port the port of the backend system
      * @return HttpProxy
      */
-    HttpProxy backend(String host, int port);
+    HttpProxy backend(String protocol, String host, int port);
 
     /**
      * Set the backend selector.

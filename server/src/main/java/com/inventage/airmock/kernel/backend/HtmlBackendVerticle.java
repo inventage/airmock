@@ -31,6 +31,7 @@ public class HtmlBackendVerticle extends AbstractVerticle implements RouteProvid
 
     private Function<String, String> backendUrlMapper = Function.identity();
 
+    private String backendProtocol;
     private String backendHost;
     private Integer backendPort;
     private String xForwardedHost;
@@ -60,6 +61,7 @@ public class HtmlBackendVerticle extends AbstractVerticle implements RouteProvid
 
             this.backendPort = getInteger(config, getConfigPrefix() + "backend-port");
             this.backendHost = config.getString(getConfigPrefix() + "backend-host");
+            this.backendProtocol = config.getString(getConfigPrefix() + "backend-host", "http");
 
             this.xForwardedHost = config.getString(HtmlBackendVerticle.class.getName() + ".x-forwarded-host");
             if (this.xForwardedHost == null) {
@@ -75,7 +77,7 @@ public class HtmlBackendVerticle extends AbstractVerticle implements RouteProvid
             this.proxy = new AirmockHttpProxy(xForwardedHost, xForwardedPort == null ? null : xForwardedPort.toString());
             this.proxy.setClient(client.getDelegate());
             this.proxy.circuitBreaker(CircuitBreaker.create("backend", vertx, getHttpProxyCircuitBreakerOptions()));
-            this.proxy.backend(backendHost, backendPort);
+            this.proxy.backend(backendProtocol, backendHost, backendPort);
             proxy.backendUrlMapper(this.backendUrlMapper);
 
             startFuture.complete();
