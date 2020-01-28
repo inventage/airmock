@@ -45,6 +45,7 @@ public class DefaultMapping implements Mapping {
      * @param restrictedToRoles The list of restricted roles.
      * @param accessDeniedUrl The url to use if the access is denied.
      * @param headers The headers to pass. Only necessary for ONESHOT
+     * @param backendProtocol The protocol to the backend.
      * @param backendHost The host of the backend.
      * @param backendPort The port of the backend.
      * @param config The additional configurations.

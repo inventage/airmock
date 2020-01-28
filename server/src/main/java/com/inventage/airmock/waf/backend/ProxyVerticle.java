@@ -115,6 +115,7 @@ public class ProxyVerticle extends AbstractVerticle implements RouteProvider {
 
     /**
      *
+     * @param mapping the mapping for which a HttpProxy should be created
      * @return HttpClientOptions to be used
      */
     protected HttpClientOptions withOptions(Mapping mapping) {

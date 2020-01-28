@@ -1,14 +1,12 @@
 package com.inventage.airmock.kernel.proxy.internal;
 
 import com.inventage.airmock.kernel.proxy.HttpProxy;
-import io.netty.handler.codec.http.HttpUtil;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientResponse;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
-import io.vertx.core.http.impl.HttpUtils;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.core.net.SocketAddress;
