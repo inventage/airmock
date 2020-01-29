@@ -2,6 +2,7 @@ package com.inventage.airmock.waf;
 
 import com.inventage.airmock.kernel.util.ConfigUtils;
 import com.inventage.airmock.waf.cookiebag.Cookiemanager;
+import com.inventage.airmock.waf.headerbag.HeaderBag;
 import com.inventage.airmock.waf.headerbag.Headermanager;
 import com.inventage.airmock.waf.mapping.*;
 import io.vertx.core.Handler;
@@ -293,23 +294,28 @@ public class AirmockHandler implements Handler<RoutingContext> {
                     try {
                         final String[] controlCookie = command.split("=");
                         if (controlCookie.length > 0) {
-                            final String cookieName = controlCookie[0];
-                            if ("ADD_CREDENTIALS".equalsIgnoreCase(cookieName) && controlCookie.length == 2) {
+                            final String commandName = controlCookie[0];
+                            if ("ADD_CREDENTIALS".equalsIgnoreCase(commandName) && controlCookie.length == 2) {
                                 final String apiValue = URLDecoder.decode(controlCookie[1], "UTF8");
                                 final String[] roles = apiValue.split(",");
                                 Arrays.stream(roles).forEach(role -> addRoleToSession(role, routingContext));
                             }
-                            if ("SET_CREDENTIALS".equalsIgnoreCase(cookieName) && controlCookie.length == 2) {
+                            if ("SET_CREDENTIALS".equalsIgnoreCase(commandName) && controlCookie.length == 2) {
                                 removeAllRolesFromSession(routingContext);
                                 final String apiValue = URLDecoder.decode(controlCookie[1], "UTF8");
                                 final String[] roles = apiValue.split(",");
                                 Arrays.stream(roles).forEach(role -> addRoleToSession(role, routingContext));
                             }
-                            if ("AUDIT_TOKEN".equalsIgnoreCase(cookieName) && controlCookie.length == 2) {
+                            if ("AUDIT_TOKEN".equalsIgnoreCase(commandName) && controlCookie.length == 2) {
                                 final String apiValue = URLDecoder.decode(controlCookie[1], "UTF8");
                                 addAuditTokenToSession(apiValue, routingContext);
                             }
-                            if ("SESSION".equalsIgnoreCase(cookieName) && controlCookie.length == 2) {
+                            if ("ADD_HEADERS".equalsIgnoreCase(commandName) && controlCookie.length == 2) {
+                                final String apiValue = URLDecoder.decode(controlCookie[1], "UTF8");
+                                final String[] headers = apiValue.split(",");
+                                Arrays.stream(headers).forEach(header -> addHeaderToSession(header, routingContext));
+                            }
+                            if ("SESSION".equalsIgnoreCase(commandName) && controlCookie.length == 2) {
                                 final String apiValue = URLDecoder.decode(controlCookie[1], "UTF8");
                                 LOGGER.info("processControlApi: SESSION '{}'", apiValue, routingContext);
                                 // send propagate logout to all mappings
@@ -335,6 +341,19 @@ public class AirmockHandler implements Handler<RoutingContext> {
 
     private void addAuditTokenToSession(String auditToken, RoutingContext routingContext) {
         session(routingContext).put(AUDIT_TOKEN, auditToken);
+    }
+
+    private void addHeaderToSession(String apiValue, RoutingContext routingContext) {
+        final String[] header = apiValue.split(": ");
+        if (header.length > 1) {
+            final String[] headerValue = header[1].split("@");
+            if (headerValue.length == 1) {
+                Headermanager.storeHeader(routingContext, new HeaderBag.HttpHeader(header[0], headerValue[0]));
+            }
+            else if (headerValue.length == 2) {
+                Headermanager.storeHeader(routingContext, new HeaderBag.HttpHeader(header[0], headerValue[0], headerValue[1]));
+            }
+        }
     }
 
     private void propagateLogout(RoutingContext routingContext) {

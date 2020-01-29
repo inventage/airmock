@@ -7,9 +7,10 @@ import io.vertx.core.json.JsonObject;
  * Header Bag.
  */
 public final class HeaderBag {
-    public static final String VALUE_FIELD = "value";
 
     public static final String NAME_FIELD = "name";
+    public static final String VALUE_FIELD = "value";
+    public static final String MAPPING_FIELD = "mapping";
 
     private HeaderBag() {
     }
@@ -36,6 +37,7 @@ public final class HeaderBag {
         final JsonObject headerToAdd = new JsonObject();
         headerToAdd.put(NAME_FIELD, newHeader.getName());
         headerToAdd.put(VALUE_FIELD, newHeader.getValue());
+        headerToAdd.put(MAPPING_FIELD, newHeader.getMappingName());
         headers.add(headerToAdd);
         return headers;
     }
@@ -43,10 +45,16 @@ public final class HeaderBag {
     public static class HttpHeader {
         private CharSequence name;
         private String value;
+        private String mappingName;
 
         public HttpHeader(CharSequence name, String value) {
+            this(name, value, null);
+        }
+
+        public HttpHeader(CharSequence name, String value, String mappingName) {
             this.name = name;
             this.value = value;
+            this.mappingName = mappingName;
         }
 
         public CharSequence getName() {
@@ -56,5 +64,7 @@ public final class HeaderBag {
         public String getValue() {
             return value;
         }
+
+        public String getMappingName() { return mappingName; }
     }
 }

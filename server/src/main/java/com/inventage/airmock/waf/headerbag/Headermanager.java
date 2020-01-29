@@ -40,6 +40,7 @@ public final class Headermanager {
             LOGGER.debug("setHeadersToRequest: header '{}' for path '{}'", headers, routingContext.request().path());
             headers.stream()
                 .map(entry -> (JsonObject) entry)
+                // ToDo: if the header contains a mapping it should be used for filtering
                 .forEach(headerEntry -> backendRequest.putHeader(headerEntry.getString(NAME_FIELD), headerEntry.getString(VALUE_FIELD))
                 );
         }
