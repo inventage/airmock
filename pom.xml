@@ -292,7 +292,7 @@
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
                             <artifactId>checkstyle</artifactId>
-                            <version>8.18
+                            <version>8.29
                             </version> <!-- Keep same version as used by the IntelliJ plugin, see IntelliJ IDEA > Preferences > Checkstyle -->
                         </dependency>
                     </dependencies>
