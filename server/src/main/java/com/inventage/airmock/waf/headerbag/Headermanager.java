@@ -37,7 +37,7 @@ public final class Headermanager {
     public static void setHeadersToRequest(RoutingContext routingContext, HttpClientRequest backendRequest) {
         final JsonArray headers = routingContext.get(HEADERS_FOR_REQUEST);
         if (headers != null && !headers.isEmpty()) {
-            LOGGER.debug("setHeadersToRequest: header '{}' for path '{}'", headers, routingContext.request().path());
+            LOGGER.debug("setHeadersToRequest: header '{}' for path '{}'", headers, routingContext.request().path(), routingContext);
             headers.stream()
                 .map(entry -> (JsonObject) entry)
                 // ToDo: if the header contains a mapping it should be used for filtering
@@ -89,7 +89,7 @@ public final class Headermanager {
     }
 
     private static void addHeader(HeaderBag.HttpHeader header, RoutingContext routingContext) {
-        LOGGER.info("addHeader: header '{}'", header.getName());
+        LOGGER.info("addHeader: header '{}'", header.getName(), routingContext);
         final Session session = session(routingContext);
         JsonArray headerBag = session.get(HEADER_BAG);
         if (headerBag == null) {
