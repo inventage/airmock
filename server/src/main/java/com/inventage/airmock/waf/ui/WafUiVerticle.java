@@ -31,7 +31,6 @@ import java.util.Map;
 
 import static com.inventage.airmock.waf.headerbag.HeaderBag.NAME_FIELD;
 import static com.inventage.airmock.waf.headerbag.HeaderBag.VALUE_FIELD;
-import static com.inventage.airmock.kernel.route.RoutingContextUtils.session;
 import static java.util.Objects.nonNull;
 
 /**
@@ -180,11 +179,32 @@ public class WafUiVerticle extends AbstractVerticle implements RouteProvider {
                         if (header instanceof JsonObject) {
                             buffer.append(pre(header.getString(NAME_FIELD) + "=" + header.getString(VALUE_FIELD)));
                         }
+
+                        final String encodedJWT = getEncodedJWT(header);
+                        if (encodedJWT != null) {
+                            buffer.append(" [");
+                            buffer.append("<a target=_blank href=\"https://jwt.io?token=")
+                                    .append(encodedJWT)
+                                    .append("\">show</a>");
+                            buffer.append("]");
+                        }
+
                         buffer.append("</li>");
                     });
             buffer.append("</ul>");
         }
         return buffer.toString();
+    }
+
+    private String getEncodedJWT(JsonObject header) {
+        final String headerName = header.getString(NAME_FIELD);
+        if ("Authorization".equals(headerName)) {
+            final String authorizationValue = header.getString(VALUE_FIELD);
+            if (authorizationValue.startsWith("Bearer ")) {
+                return authorizationValue.replaceFirst("Bearer ", "");
+            }
+        }
+        return null;
     }
 
     private String mappingSection(RoutingContext rc) {
