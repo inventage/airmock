@@ -38,8 +38,8 @@ import static com.inventage.airmock.waf.cookiebag.Cookiemanager.AUDIT_TOKEN;
 public class AirmockHandler implements Handler<RoutingContext> {
     public static final String PATH_TO_CONFIG = "config-path";
     public static final String PREFIX = AirmockHandler.class.getName() + ".";
+    public static final String WAF_ROLES = "WAF_ROLES";
 
-    private static final String WAF_ROLES = "WAF_ROLES";
     private static final Logger LOGGER = LoggerFactory.getLogger(AirmockHandler.class);
 
     private static final String API_COOKIE = "AL_CONTROL";
@@ -357,7 +357,7 @@ public class AirmockHandler implements Handler<RoutingContext> {
     }
 
     private void propagateLogout(RoutingContext routingContext) {
-        mappings.stream().forEach(mapping -> mapping.logout(routingContext));
+        mappings.forEach(mapping -> mapping.logout(routingContext));
     }
 
     private void removeAllRolesFromSession(RoutingContext routingContext) {
