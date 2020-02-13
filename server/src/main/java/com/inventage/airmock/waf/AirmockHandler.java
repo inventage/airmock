@@ -93,7 +93,7 @@ public class AirmockHandler implements Handler<RoutingContext> {
     }
 
     private void logConfig(JsonObject config) {
-        config.stream().filter(entry -> ofInterest(entry)).sorted().forEach(property -> LOGGER.info("{}", property));
+        config.stream().filter(this::ofInterest).sorted().forEach(property -> LOGGER.info("{}", property));
     }
 
     private String readFile(String path, Charset encoding) throws IOException {
@@ -124,9 +124,9 @@ public class AirmockHandler implements Handler<RoutingContext> {
         final String name = mapping.getString("name");
         final String contextRoot = mapping.getString("contextRoot");
         final String deniedAccessUrl = configUtils.replaceEnvVariables(mapping.getString("deniedAccessUrl"));
-        final MappingFlowType authenticationFlow = authenticationFlow(mapping, "authenticationFlow");
+        final MappingFlowType authenticationFlow = authenticationFlow(mapping);
         final JsonArray restrictedToRoles = jsonArray(mapping, "restrictedToRoles");
-        final String[] objects = restrictedToRoles.stream().map(o -> o.toString()).collect(Collectors.toList()).toArray(new String[0]);
+        final String[] objects = restrictedToRoles.stream().map(Object::toString).toArray(String[]::new);
         final JsonArray headersArray = jsonArray(mapping, "headers");
         final List<String> headers = headersArray.stream().map(Object::toString).collect(Collectors.toList());
         final JsonObject backend = mapping.getJsonObject("backend");
@@ -145,7 +145,7 @@ public class AirmockHandler implements Handler<RoutingContext> {
         return jsonArray == null ? new JsonArray() : jsonArray;
     }
 
-    private MappingFlowType authenticationFlow(JsonObject mapping, String property) {
+    private MappingFlowType authenticationFlow(JsonObject mapping) {
         final String mappingString = mapping.getString("authenticationFlow");
         if (mappingString == null) {
             return MappingFlowType.CODE_401;
@@ -261,7 +261,7 @@ public class AirmockHandler implements Handler<RoutingContext> {
 
     private void addSetCookieForJWT(RoutingContext routingContext, Mapping mapping) {
         final Object jwt = routingContext.data().get(STORED_JWT_KEY);
-        if (jwt != null && jwt instanceof String) {
+        if (jwt instanceof String) {
             final MultiMap headers = routingContext.response().headers();
             headers.add(SET_COOKIE, getValueForSetCookie((String) jwt));
         }
@@ -285,7 +285,7 @@ public class AirmockHandler implements Handler<RoutingContext> {
             .forEach(cookie -> processControlApi(cookie, routingContext));
     }
 
-    private boolean processControlApi(HttpCookie cookie, RoutingContext routingContext) {
+    private void processControlApi(HttpCookie cookie, RoutingContext routingContext) {
         if (API_COOKIE.equals(cookie.getName())) {
             try {
                 final String cookieValue = URLDecoder.decode(cookie.getValue(), "UTF8");
@@ -332,10 +332,6 @@ public class AirmockHandler implements Handler<RoutingContext> {
             catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-            return false;
-        }
-        else {
-            return true;
         }
     }
 
