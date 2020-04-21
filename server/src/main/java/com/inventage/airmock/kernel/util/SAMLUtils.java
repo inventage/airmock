@@ -57,7 +57,7 @@ public final class SAMLUtils {
     /**
      * Extracts the first assertion of a SAMLResponse and returns it.
      * @param encodedSamlObject The base64 encoded string SAMLResponse.
-     * @return The first Assertion of the given SAMLRespone as a base64 encoded String.
+     * @return The first Assertion of the given SAMLResponse as a base64 encoded String.
      */
     public static String getEncodedAssertion(String encodedSamlObject) {
         try {
