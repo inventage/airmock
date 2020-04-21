@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.inventage.airmock.kernel.route.RoutingContextUtils.session;
-import static com.inventage.airmock.waf.cookiebag.Cookiemanager.WAF_ROLES;
+import static com.inventage.airmock.waf.AirmockHandler.WAF_ROLES;
 
 /**
  * The default mapping used in the airmock WAF.

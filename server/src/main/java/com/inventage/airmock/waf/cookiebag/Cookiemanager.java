@@ -20,7 +20,6 @@ import static com.inventage.airmock.kernel.route.RoutingContextUtils.session;
  * Cookie Manager.
  */
 public final class Cookiemanager {
-    public static final String WAF_ROLES = "WAF_ROLES";
     public static final String AUDIT_TOKEN = "AUDIT_TOKEN";
     public static final String COOKIE_BAG = "COOKIE_BAG";
 

@@ -17,7 +17,7 @@ import io.vertx.reactivex.ext.web.client.WebClient;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 
-import static com.inventage.airmock.waf.cookiebag.Cookiemanager.WAF_ROLES;
+import static com.inventage.airmock.waf.AirmockHandler.WAF_ROLES;
 
 
 public class OneShotMapping extends DefaultMapping {

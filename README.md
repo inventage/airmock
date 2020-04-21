@@ -2,7 +2,9 @@
 
 [![Build Pipeline Status](https://github.com/inventage/airmock/workflows/Build%20Pipeline/badge.svg)](https://github.com/inventage/airmock/actions?query=workflow%3A%22Build+Pipeline%22)
 
-A mock implementation for web application firewalls.
+Airmock is a mock implementation for web application firewalls. This means it intercepts requests to a web application, 
+checks if the session the request is made in has the necessary roles and redirects to a URL for the user to log in if the roles are not there. 
+If the required roles are there the request ist passed to the configured backend.
 
 The primary use case for airmock is during application development. 
 
@@ -32,6 +34,8 @@ The configuration is done by environment variables and a JSON file for defining 
 
 ### Environment Variables
 
+TODO
+
 ### Mappings
 
 The mappings are defined by a mapping file in JSON syntax. It contains all mappings to be used.
@@ -59,6 +63,7 @@ The docker images comes with a default mapping file. It is located at `/opt/airm
       "name": "proxy",
       "contextRoot": "/",
       "backend": {
+        "protocol": "http",
         "host": "localhost",
         "port": "10001"
       }
@@ -74,7 +79,7 @@ A mapping contains the following properties:
 - **authenticationFlow**: The Type of authentication flow. Can be REDIRECT, ONESHOT, CODE_401, CODE_403 or `TOKENEXCHANGE`. These are explained below.
 - **deniedAccessUrl**: The url to redirect to if the user does not have any of the required roles. For `TOKENEXCHANGE` this is the URL to send the token exchange request to. You can use environment variables here as ${exampleEnvVar}.
 - **headers**: The headers to pass to the deniedAccessUrl. Used for ONESHOT.
-- **backend**: The host and port of the backend to redirect to. You can use environment variables here as ${exampleEnvVar}
+- **backend**: The host port and protocol of the backend to redirect to. You can use environment variables here as ${exampleEnvVar}
 - **config**: This is a container for additional configurations. So far this is used only for flow type `TOKENEXCHANGE`.
 - **certificateUrl**: The URL to get the certificate to check an incoming JWT token against. Maybe check the well-known url of your server, if you don't know it. You can use environment variables here as ${exampleEnvVar}.
 - **subjectIssuer**: //TODO
@@ -99,3 +104,42 @@ The authentication is done by:
 ```
 docker login -u <GITHUB-USERNAME> -p <PERSONAL-ACCESS-TOKEN> docker.pkg.github.com
 ```
+
+## Typical sequence
+Here is a typical sequencen for a user trying to access a backend server and then logging in with username and password first. The relevant part of the config for it looks like this:
+
+```
+{
+  "mappings": [
+    {
+      "name": "backend",
+      "contextRoot": "/backend",
+      "restrictedToRoles": ["backendRole"],
+      "authenticationFlow": "REDIRECT",
+      "deniedAccessUrl": "/auth/login?redirect_uri=",
+      "backend": {
+        "host": "backendServer",
+        "port": "10001"
+      }
+    },
+    {
+      "name": "iam",
+      "contextRoot": "/auth",
+      "authenticationFlow": "REDIRECT",
+      "backend": {
+        "host": "localhost",
+        "port": "10001"
+      }
+    }
+  ]
+}
+```
+![airmock-flow](./docs/airmock_flow.png)
+
+Please note that the details of the actual login can vary a lot depending on IAM Server and login method such as different kinds of second factor authorization.
+
+## Setting roles in Airmock (Control API)
+
+To set a role for a user in Airmock, the IAM Server must use the ADD_CREDENTIALS command of the Airlock Control API. 
+The Airlock IAM Server does this automatically since it is its way to communicate with the Airlock WAF. 
+We also developed an extension for Keycloak that can communicate using this API. That extension also enables Keycloak to communicate with an actual Airlock WAF.
