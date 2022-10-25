@@ -120,6 +120,7 @@ public class ProxyVerticle extends AbstractVerticle implements RouteProvider {
      */
     protected HttpClientOptions withOptions(Mapping mapping) {
         return new HttpClientOptions().setMaxInitialLineLength(10000)
+                .setMaxHeaderSize(1024 * 20)
                 .setMaxPoolSize(10 /* = HttpClientOptions.DEFAULT_MAX_POOL_SIZE*/)
                 .setSsl(mapping.backendProtocol() != null && "https".equalsIgnoreCase(mapping.backendProtocol()))
                 .setTrustAll(true);
